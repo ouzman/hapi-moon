@@ -6,41 +6,25 @@ const config = require('config');
 const Config = JSON.parse(JSON.stringify(config));
 const Boom = require('@hapi/boom');
 const Nunjucks = require('nunjucks');
+const Pack = require("../package");
 
 const plugins = [
-    {
-        plugin: require('@hapi/yar'),
-        options: Config.cookie
-    },
-    {
-        plugin: require('@hapi/crumb'),
-        options: Config.crumb
-    },
-    {
-        plugin: './lib/mongoose',
-        options: {
-            uri: Config.mongo
-        }
-    },
-    {
-        plugin: './lib/auth' // remove this plugin if you don't need authentication
-    },
-    {
-        plugin: './app/routes/auth', // remove this plugin too
-        routes: {
-            prefix: '/auth'
-        }
-    },
-    {
-        plugin: './app/routes/main'
-    },
-    {
-        plugin: './app/routes/user',
-        routes: {
-            prefix: '/user'
-        }
-    }
+    {plugin: require('@hapi/yar'), options: Config.cookie},
+    {plugin: require('@hapi/crumb'), options: Config.crumb},
+    {plugin: './lib/mongoose', options: {uri: Config.mongo}},
+    {plugin: require('@hapi/inert')},
+    {plugin: require('@hapi/vision')},
+    {plugin: require('hapi-swagger'), options: {info: {title: Config.swagger.title, version: Pack.version}}},
+    {plugin: require('blipp')},
+    {plugin: require('laabr')},
+    {plugin: './lib/auth'},
 ];
+
+const routes = [
+    {plugin: './app/routes/auth', routes: {prefix: '/auth'}},
+    {plugin: './app/routes/user', routes: {prefix: '/user'}}
+];
+
 exports.manifest = {
     server: {
         router: {
@@ -98,7 +82,7 @@ exports.manifest = {
         ]
     },
     register: {
-        plugins
+        plugins: [...plugins, ...routes]
     }
 };
 

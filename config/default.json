@@ -39,5 +39,8 @@
     "port": 6379,
     "partition": "hapi_moon_cache"
   },
-  "mongo": "mongodb://localhost:27017/hapi-moon-app"
+  "mongo": "mongodb://localhost:27017/hapi-moon-app",
+  "swagger": {
+    "title": "hapi-moon API Documentation"
+  }
 }
